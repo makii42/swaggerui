@@ -7,13 +7,17 @@ jobs:
     steps:
       - checkout
       - run: go-bindata -pkg swaggerui -o ./bindata.go ./assets
-  check:
+      - persist_to_workspace:
+          root: .
+          paths:
+            - "*"
+  verify:
     docker:
       - image: makii42/untouched:latest
     working_directory: /go/src/github.com/makii42/swaggerui
     steps: 
       - attach_workspace:
-          at: ./dist
+          at: .
       - run: untouched
 
   test:
@@ -23,33 +27,19 @@ jobs:
     steps:
       - run: go build .
       - persist_to_workspace:
-          root: ./dist
+          root: .
           paths:
             - "*"
 
 
-  docker-build:
-    docker:
-      - image: docker:17.05.0-ce-git
-    steps:
-      - attach_workspace:
-          at: ./dist
-      - setup_remote_docker
-      - run: docker login -u $DOCKER_HUB_USER_ID -p $DOCKER_HUB_PWD
-      - run: mv dist/Dockerfile .
-      - run: docker build -t makii42/untouched:latest .
-      - run: docker tag makii42/untouched:latest makii42/untouched:$CIRCLE_TAG
-      - run: docker push makii42/untouched:latest
-      - run: docker push makii42/untouched:$CIRCLE_TAG
-
 workflows:
   version: 2
-  build_and_check:
+  all:
     jobs: 
       - generate
-      - check:
+      - verify:
           requires: 
             - generate
       - test:
           requires:
-            -check
+            - verify
