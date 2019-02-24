@@ -1,0 +1,13 @@
+workspace:
+  base: /go/src
+  path: github.com/makii42/swaggerui
+
+pipeline:
+  gen:
+    image: docker.io
+    commands:
+      - make gen
+  untouched:
+    image: makii42/untouched:v0.0.2
+    commands:
+    - untouched
