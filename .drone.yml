@@ -10,4 +10,4 @@ pipeline:
   untouched:
     image: makii42/untouched:v0.0.2
     commands:
-    - untouched || git diff
+    - untouched
