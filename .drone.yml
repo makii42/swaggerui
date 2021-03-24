@@ -19,8 +19,8 @@ steps:
 
 - name: untouched
   pull: if-not-exists
-  image: makii42/untouched:v0.0.2
+  image: makii42/untouched:0.1.2
   commands:
-  - untouched
+  - untouched -diff
 
 ...
