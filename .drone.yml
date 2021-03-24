@@ -1,13 +1,26 @@
+---
+kind: pipeline
+name: default
+
+platform:
+  os: linux
+  arch: amd64
+
 workspace:
   base: /go/src
   path: github.com/makii42/swaggerui
 
-pipeline:
-  gen:
-    image: makii42/bindata-builder
-    commands:
-      - make gen
-  untouched:
-    image: makii42/untouched:v0.0.2
-    commands:
-    - untouched
+steps:
+- name: gen
+  pull: if-not-exists
+  image: makii42/bindata-builder
+  commands:
+  - make gen
+
+- name: untouched
+  pull: if-not-exists
+  image: makii42/untouched:v0.0.2
+  commands:
+  - untouched
+
+...
